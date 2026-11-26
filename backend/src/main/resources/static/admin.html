@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel | VVCE CSE (AI &amp; ML) Cabin Availability</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+    <header class="hero-header">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-top-row">
+                <nav aria-label="Breadcrumb" class="breadcrumb">
+                    <ol>
+                        <li>VVCE Mysuru</li>
+                        <li aria-hidden="true">&rsaquo;</li>
+                        <li>CSE (AI &amp; ML)</li>
+                        <li aria-hidden="true">&rsaquo;</li>
+                        <li aria-current="page">Admin Panel</li>
+                    </ol>
+                </nav>
+
+                <div class="header-actions">
+                    <a href="/" class="nav-pill-link">Public Board</a>
+                    <a href="/diagnostics" class="nav-pill-link">Diagnostics</a>
+                    <button type="button" class="icon-btn" id="admin-theme-btn" aria-label="Toggle light or dark theme">
+                        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"
+                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"
+                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="nav-pill-link nav-pill-accent" id="admin-logout-btn" hidden>Logout</button>
+                </div>
+            </div>
+
+            <div class="hero-title-row">
+                <div class="hero-title-block">
+                    <div class="college-kicker">Vidyavardhaka College of Engineering, Mysuru</div>
+                    <h1>Cabin Availability Administration</h1>
+                    <p class="hero-subtitle">Manage faculty profiles, manual cabin overrides, timetable slots, audit history, and ESP32 units</p>
+                </div>
+            </div>
+
+            <nav class="primary-tabs" id="admin-tabs-bar" aria-label="Admin sections" role="tablist" hidden>
+                <button type="button" class="tab-btn active" data-admin-tab="faculty">Faculty &amp; Override</button>
+                <button type="button" class="tab-btn" data-admin-tab="timetable">Timetable Editor</button>
+                <button type="button" class="tab-btn" data-admin-tab="logs">Status History</button>
+                <button type="button" class="tab-btn" data-admin-tab="devices">ESP32 Devices</button>
+                <button type="button" class="tab-btn" data-admin-tab="password">Change Password</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <!-- Login Card -->
+        <section id="admin-login-section" class="auth-wrap" hidden>
+            <article class="panel-card auth-card">
+                <h2>Admin Sign In</h2>
+                <p class="muted-text">Sign in with your department administrator credentials. Locked for 5 minutes after 5 failed attempts.</p>
+                <div id="login-error" class="alert-error" role="alert" hidden></div>
+                <form id="admin-login-form" class="form-stack">
+                    <div class="setting-group">
+                        <label for="login-username">Username</label>
+                        <input id="login-username" type="text" class="text-input" value="admin" autocomplete="username" required />
+                    </div>
+                    <div class="setting-group">
+                        <label for="login-password">Password</label>
+                        <input id="login-password" type="password" class="text-input" autocomplete="current-password" required />
+                    </div>
+                    <button type="submit" class="btn-primary">Sign In</button>
+                </form>
+            </article>
+        </section>
+
+        <!-- Forced First-Login Password Change -->
+        <section id="admin-force-pw-section" class="auth-wrap" hidden>
+            <article class="panel-card auth-card">
+                <h2>Password Change Required</h2>
+                <p class="muted-text">For security, you must change the initial admin password before accessing admin tools.</p>
+                <div id="force-pw-error" class="alert-error" role="alert" hidden></div>
+                <form id="force-pw-form" class="form-stack">
+                    <div class="setting-group">
+                        <label for="force-cur-pw">Current Password</label>
+                        <input id="force-cur-pw" type="password" class="text-input" required />
+                    </div>
+                    <div class="setting-group">
+                        <label for="force-new-pw">New Password (min 8 characters)</label>
+                        <input id="force-new-pw" type="password" class="text-input" minlength="8" required />
+                    </div>
+                    <div class="setting-group">
+                        <label for="force-confirm-pw">Confirm New Password</label>
+                        <input id="force-confirm-pw" type="password" class="text-input" minlength="8" required />
+                    </div>
+                    <button type="submit" class="btn-primary">Update Password &amp; Continue</button>
+                </form>
+            </article>
+        </section>
+
+        <!-- Admin Console -->
+        <section id="admin-console" hidden>
+            <div id="admin-toast" class="alert-success" hidden></div>
+            <div id="admin-error" class="alert-error" hidden></div>
+
+            <!-- TAB 1: FACULTY -->
+            <div id="admin-tab-faculty" class="admin-panel">
+                <article class="panel-card" style="margin-bottom:16px">
+                    <div class="panel-head">
+                        <h2 id="fac-form-title">Add Faculty Member</h2>
+                        <button type="button" class="btn-outline" id="fac-reset-btn" hidden>Cancel Edit</button>
+                    </div>
+                    <form id="admin-faculty-form" class="admin-grid-form">
+                        <input type="hidden" id="fac-edit-id" />
+                        <input type="text" id="fac-name" class="text-input" placeholder="Full Name (e.g., Dr. Aditya C R)" required />
+                        <input type="text" id="fac-designation" class="text-input" placeholder="Designation" required />
+                        <input type="text" id="fac-qualification" class="text-input" placeholder="Qualification (e.g., B.E., M.Tech., Ph.D.)" required />
+                        <input type="text" id="fac-department" class="text-input" value="CSE (AI & ML)" placeholder="Department" required />
+                        <button type="submit" class="btn-primary" id="fac-submit-btn">Save Faculty</button>
+                    </form>
+                </article>
+
+                <article class="panel-card">
+                    <div class="panel-head">
+                        <h2>Teaching Staff &amp; Manual Status Override</h2>
+                        <span class="muted-text">Manual overrides log source='ADMIN' and push live over SSE</span>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Designation</th>
+                                    <th>Qualification</th>
+                                    <th>Status</th>
+                                    <th>Manual Override</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-faculty-tbody"></tbody>
+                        </table>
+                    </div>
+                </article>
+            </div>
+
+            <!-- TAB 2: TIMETABLE EDITOR -->
+            <div id="admin-tab-timetable" class="admin-panel" hidden>
+                <article class="panel-card" style="margin-bottom:16px">
+                    <div class="panel-head">
+                        <h2 id="slot-form-title">Add Timetable Slot</h2>
+                        <button type="button" class="btn-outline" id="slot-reset-btn" hidden>Cancel Edit</button>
+                    </div>
+                    <form id="admin-slot-form" class="admin-grid-form">
+                        <input type="hidden" id="slot-edit-id" />
+                        <select id="slot-section" class="select-control" required>
+                            <option value="A">Section A</option>
+                            <option value="B">Section B</option>
+                            <option value="C">Section C</option>
+                            <option value="ALL">ALL (Split Elective)</option>
+                        </select>
+                        <select id="slot-day" class="select-control" required>
+                            <option value="MON">MON</option>
+                            <option value="TUE">TUE</option>
+                            <option value="WED">WED</option>
+                            <option value="THU">THU</option>
+                            <option value="FRI">FRI</option>
+                            <option value="SAT">SAT</option>
+                        </select>
+                        <input type="time" id="slot-start" class="text-input" value="09:00" required />
+                        <input type="time" id="slot-end" class="text-input" value="10:00" required />
+                        <select id="slot-course" class="select-control" required></select>
+                        <select id="slot-faculty" class="select-control"></select>
+                        <input type="text" id="slot-room" class="text-input" placeholder="Room (e.g., M510, M308)" />
+                        <label class="inline-check"><input type="checkbox" id="slot-islab" /> Lab</label>
+                        <button type="submit" class="btn-primary">Save Slot</button>
+                    </form>
+                </article>
+
+                <article class="panel-card">
+                    <div class="panel-head">
+                        <h2>Timetable Slots</h2>
+                        <div class="tt-actions">
+                            <select id="slot-filter-section" class="select-control">
+                                <option value="">All Sections</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="ALL">ALL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Sec</th>
+                                    <th>Day</th>
+                                    <th>Time</th>
+                                    <th>Course</th>
+                                    <th>Faculty</th>
+                                    <th>Room</th>
+                                    <th>Lab</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-slots-tbody"></tbody>
+                        </table>
+                    </div>
+                </article>
+            </div>
+
+            <!-- TAB 3: STATUS LOGS -->
+            <div id="admin-tab-logs" class="admin-panel" hidden>
+                <article class="panel-card">
+                    <div class="panel-head">
+                        <h2>Status Audit History</h2>
+                        <button type="button" class="btn-outline" id="logs-export-btn">Export CSV</button>
+                    </div>
+                    <form id="logs-filter-form" class="admin-grid-form" style="margin-bottom:14px">
+                        <input type="search" id="logs-search" class="text-input" placeholder="Search faculty name..." />
+                        <select id="logs-source" class="select-control">
+                            <option value="ALL">All Sources</option>
+                            <option value="ESP32">ESP32</option>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="TIMETABLE">TIMETABLE</option>
+                        </select>
+                        <input type="date" id="logs-from" class="text-input" aria-label="From date" />
+                        <input type="date" id="logs-to" class="text-input" aria-label="To date" />
+                        <button type="submit" class="btn-primary">Apply Filter</button>
+                    </form>
+                    <div class="table-scroll">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Faculty</th>
+                                    <th>Status</th>
+                                    <th>Source</th>
+                                    <th>Timestamp (IST)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-logs-tbody"></tbody>
+                        </table>
+                    </div>
+                </article>
+            </div>
+
+            <!-- TAB 4: DEVICES -->
+            <div id="admin-tab-devices" class="admin-panel" hidden>
+                <article class="panel-card" style="margin-bottom:16px">
+                    <div class="panel-head">
+                        <h2>ESP32 Device Mapping &amp; Live Status</h2>
+                        <span class="muted-text">Each ESP32 sketch uses FACULTY_ID matching the table ID below</span>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>FACULTY_ID</th>
+                                    <th>Faculty</th>
+                                    <th>ESP32 Status</th>
+                                    <th>IP Address</th>
+                                    <th>RSSI / Signal</th>
+                                    <th>Last Seen</th>
+                                    <th>Device Label / Mapping</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-devices-tbody"></tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article class="panel-card">
+                    <div class="panel-head">
+                        <h2>Device Online / Offline History (device_log)</h2>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Faculty ID</th>
+                                    <th>Faculty</th>
+                                    <th>Event</th>
+                                    <th>At (IST)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-device-logs-tbody"></tbody>
+                        </table>
+                    </div>
+                </article>
+            </div>
+
+            <!-- TAB 5: CHANGE PASSWORD -->
+            <div id="admin-tab-password" class="admin-panel" hidden>
+                <article class="panel-card auth-card">
+                    <h2>Change Admin Password</h2>
+                    <form id="admin-pw-form" class="form-stack">
+                        <div class="setting-group">
+                            <label for="pw-cur">Current Password</label>
+                            <input id="pw-cur" type="password" class="text-input" required />
+                        </div>
+                        <div class="setting-group">
+                            <label for="pw-new">New Password (min 8 chars)</label>
+                            <input id="pw-new" type="password" class="text-input" minlength="8" required />
+                        </div>
+                        <div class="setting-group">
+                            <label for="pw-confirm">Confirm New Password</label>
+                            <input id="pw-confirm" type="password" class="text-input" minlength="8" required />
+                        </div>
+                        <button type="submit" class="btn-primary">Change Password</button>
+                    </form>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/state.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>

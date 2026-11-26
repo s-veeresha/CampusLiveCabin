@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pipeline Diagnostics | VVCE CSE (AI &amp; ML)</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+    <header class="hero-header" style="padding-bottom: 18px">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-top-row">
+                <nav aria-label="Breadcrumb" class="breadcrumb">
+                    <ol>
+                        <li>VVCE Mysuru</li>
+                        <li aria-hidden="true">&rsaquo;</li>
+                        <li>CSE (AI &amp; ML)</li>
+                        <li aria-hidden="true">&rsaquo;</li>
+                        <li aria-current="page">Diagnostics</li>
+                    </ol>
+                </nav>
+
+                <div class="header-actions">
+                    <a href="/" class="nav-pill-link">Public Board</a>
+                    <a href="/admin" class="nav-pill-link nav-pill-accent">Admin</a>
+                    <button type="button" class="icon-btn" id="diag-theme-btn" aria-label="Toggle light or dark theme">
+                        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"
+                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"
+                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="hero-title-block">
+                <div class="college-kicker">ESP32 &rarr; Spring Boot &rarr; MySQL &rarr; SSE Pipeline</div>
+                <h1>Live System Diagnostics</h1>
+                <p class="hero-subtitle">Read-only health check and trace of the last 10 requests to POST /api/faculty/{id}/status</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <section class="dashboard-kpis" id="diag-kpis"></section>
+
+        <article class="panel-card" style="margin-bottom:16px">
+            <div class="panel-head">
+                <h2>Discovered LAN URLs for ESP32 <code>SERVER</code></h2>
+                <button type="button" class="btn-outline" id="diag-refresh-btn">Refresh now</button>
+            </div>
+            <div id="diag-lan-urls" class="muted-text">Checking network interfaces...</div>
+        </article>
+
+        <article class="panel-card">
+            <div class="panel-head">
+                <h2>Last 10 Requests to <code>POST /api/faculty/{id}/status</code></h2>
+                <span class="muted-text" id="diag-last-change">Last status change: --</span>
+            </div>
+            <div class="table-scroll">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Time (IST)</th>
+                            <th>Faculty ID</th>
+                            <th>Value</th>
+                            <th>Source IP</th>
+                            <th>HTTP Result</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody id="diag-requests-tbody">
+                        <tr><td colspan="6" style="text-align:center">Waiting for status requests...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </main>
+
+    <script src="/js/state.js"></script>
+    <script src="/js/diagnostics.js"></script>
+</body>
+</html>

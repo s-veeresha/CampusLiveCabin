@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VVCE Mysuru | CSE (AI &amp; ML) Faculty Cabin Availability</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="hero-header">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-top-row">
+                <nav aria-label="Breadcrumb" class="breadcrumb">
+                    <ol>
+                        <li>VVCE Mysuru</li>
+                        <li aria-hidden="true">&rsaquo;</li>
+                        <li>CSE (AI &amp; ML)</li>
+                        <li aria-hidden="true">&rsaquo;</li>
+                        <li aria-current="page">Teaching Staff</li>
+                    </ol>
+                </nav>
+
+                <div class="header-actions">
+                    <div class="ist-clock" id="ist-clock" aria-label="Current IST time">--:-- IST</div>
+
+                    <div class="esp32-wrap" id="esp32-wrap">
+                        <button type="button"
+                                class="live-pill esp32-pill esp32-offline"
+                                id="esp32-pill-btn"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                aria-label="ESP32 hardware connection status">
+                            <span class="live-dot" aria-hidden="true"></span>
+                            <span id="esp32-pill-text">ESP32 offline</span>
+                        </button>
+                        <div class="dropdown-panel esp32-dropdown" id="esp32-dropdown" hidden>
+                            <div class="dropdown-header">
+                                <strong>ESP32 Cabin Devices</strong>
+                                <span id="esp32-dropdown-summary" class="muted-text">0 online</span>
+                            </div>
+                            <div id="esp32-dropdown-list" class="dropdown-list">
+                                <div class="dropdown-empty">No ESP32 devices have reported yet.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="live-pill live-connecting" id="live-indicator" role="status" aria-live="polite">
+                        <span class="live-dot" aria-hidden="true"></span>
+                        <span id="live-text">Connecting...</span>
+                    </div>
+
+                    <div class="notif-wrap">
+                        <button type="button"
+                                class="icon-btn"
+                                id="notif-btn"
+                                aria-label="Open notifications"
+                                aria-expanded="false"
+                                aria-haspopup="true">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 11-6 0h6z"
+                                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="notif-badge" id="notif-badge" hidden>0</span>
+                        </button>
+
+                        <div class="dropdown-panel notif-dropdown" id="notif-dropdown" hidden>
+                            <div class="dropdown-header">
+                                <strong>Recent Notifications</strong>
+                                <button type="button" class="text-link-btn" id="notif-mark-read-btn">Mark read</button>
+                            </div>
+                            <div id="notif-dropdown-list" class="dropdown-list">
+                                <div class="dropdown-empty">No recent events.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button"
+                            class="icon-btn"
+                            id="theme-toggle-btn"
+                            aria-label="Toggle light or dark theme"
+                            title="Switch theme">
+                        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"
+                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"
+                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+
+                    <button type="button"
+                            class="icon-btn"
+                            id="settings-btn"
+                            aria-label="Open display and notification settings"
+                            aria-expanded="false">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h.08A1.65 1.65 0 0010 3.09V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51h.08a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.08a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"
+                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="hero-title-row">
+                <div class="hero-title-block">
+                    <div class="college-kicker">Vidyavardhaka College of Engineering, Mysuru</div>
+                    <h1>Faculty Cabin Availability System</h1>
+                    <p class="hero-subtitle">
+                        Department of Computer Science &amp; Engineering (Artificial Intelligence &amp; Machine Learning)
+                        &middot; Live ESP32 Cabin Board &amp; 5th Sem Timetable
+                    </p>
+                </div>
+
+                <div class="hero-nav-links">
+                    <a href="/diagnostics" class="nav-pill-link">Diagnostics</a>
+                    <a href="/admin" class="nav-pill-link nav-pill-accent">Admin</a>
+                </div>
+            </div>
+
+            <nav class="primary-tabs" aria-label="Main sections" role="tablist">
+                <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="directory" id="tab-directory">
+                    Staff Directory
+                </button>
+                <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="dashboard" id="tab-dashboard">
+                    Dashboard
+                </button>
+                <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="timetable" id="tab-timetable">
+                    Timetable
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="reconnect-banner" id="reconnect-banner" role="alert" hidden>
+        <div class="container reconnect-banner-inner">
+            <span>Reconnecting to live SSE stream&hellip; Updates will resume automatically.</span>
+            <button type="button" class="btn-sm" id="manual-reconnect-btn">Retry now</button>
+        </div>
+    </div>
+
+    <main id="main-content" class="container main-content">
+        <!-- DIRECTORY VIEW -->
+        <section id="view-directory" class="tab-panel" role="tabpanel" aria-labelledby="tab-directory">
+            <section class="stats-grid stats-grid-3" aria-label="Quick Availability Summary">
+                <article class="stat-card stat-total">
+                    <div class="stat-label">Total Faculty</div>
+                    <div class="stat-value" id="stat-total">0</div>
+                    <div class="stat-note">CSE (AI &amp; ML) Teaching Staff</div>
+                </article>
+                <article class="stat-card stat-available">
+                    <div class="stat-label">Available Now</div>
+                    <div class="stat-value" id="stat-available">0</div>
+                    <div class="stat-note">In cabin &middot; Live button state</div>
+                </article>
+                <article class="stat-card stat-unavailable">
+                    <div class="stat-label">Not Available</div>
+                    <div class="stat-value" id="stat-unavailable">0</div>
+                    <div class="stat-note">Away / In class / Busy</div>
+                </article>
+            </section>
+
+            <section class="controls-bar" aria-label="Search, filter, and layout controls">
+                <div class="search-wrap">
+                    <label class="sr-only" for="search-input">Search faculty by name, designation, or course</label>
+                    <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+                              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <input id="search-input"
+                           type="search"
+                           placeholder="Search by name, designation, qualification, or active course..."
+                           autocomplete="off" />
+                </div>
+
+                <div class="filter-chips" role="group" aria-label="Filter by availability or favourites">
+                    <button type="button" class="chip active" data-filter="all" aria-pressed="true">
+                        All <span class="chip-count" id="chip-all-count">0</span>
+                    </button>
+                    <button type="button" class="chip chip-available" data-filter="available" aria-pressed="false">
+                        Available <span class="chip-count" id="chip-available-count">0</span>
+                    </button>
+                    <button type="button" class="chip chip-unavailable" data-filter="unavailable" aria-pressed="false">
+                        Not available <span class="chip-count" id="chip-unavailable-count">0</span>
+                    </button>
+                    <button type="button" class="chip chip-fav" data-filter="favourites" aria-pressed="false">
+                        &#9733; Favourites <span class="chip-count" id="chip-fav-count">0</span>
+                    </button>
+                </div>
+
+                <div class="view-sort-controls">
+                    <label class="sr-only" for="sort-select">Sort faculty</label>
+                    <select id="sort-select" class="select-control" aria-label="Sort faculty">
+                        <option value="default">Sort: Staff Order</option>
+                        <option value="name">Sort: Name (A&ndash;Z)</option>
+                        <option value="designation">Sort: Designation</option>
+                        <option value="updated">Sort: Recently Updated</option>
+                    </select>
+
+                    <div class="view-toggle" role="group" aria-label="Card or list layout">
+                        <button type="button" class="view-btn active" data-view="cards" aria-pressed="true" aria-label="Grid view">
+                            Grid
+                        </button>
+                        <button type="button" class="view-btn" data-view="list" aria-pressed="false" aria-label="List view">
+                            List
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <div class="legend-strip" aria-label="Designation colour legend">
+                <span class="legend-item"><i class="dot dot-hod"></i>Professor &amp; Head</span>
+                <span class="legend-item"><i class="dot dot-prof"></i>Professor</span>
+                <span class="legend-item"><i class="dot dot-assoc"></i>Associate Professor</span>
+                <span class="legend-item"><i class="dot dot-sr-asst"></i>Sr. Assistant Professor</span>
+                <span class="legend-item"><i class="dot dot-asst"></i>Assistant Professor</span>
+                <span class="legend-hint">Read-only &middot; Star to pin &middot; Bell to notify &middot; Click card for timetable</span>
+            </div>
+
+            <section id="faculty-grid" class="faculty-grid" aria-label="Teaching Staff Directory" aria-live="polite">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </section>
+
+            <div id="empty-state" class="empty-state" hidden>
+                No faculty members match your current search or filter.
+            </div>
+        </section>
+
+        <!-- DASHBOARD VIEW -->
+        <section id="view-dashboard" class="tab-panel" role="tabpanel" aria-labelledby="tab-dashboard" hidden>
+            <div class="dashboard-kpis" id="dashboard-kpis"></div>
+
+            <div class="dashboard-charts-grid">
+                <article class="panel-card">
+                    <div class="panel-head">
+                        <h2>Cabin Availability Split</h2>
+                        <span class="muted-text" id="dash-availability-ratio">--</span>
+                    </div>
+                    <div id="dash-donut-container" class="donut-wrap"></div>
+                </article>
+
+                <article class="panel-card">
+                    <div class="panel-head">
+                        <h2>Availability by Designation</h2>
+                        <span class="muted-text">Available / Total</span>
+                    </div>
+                    <div id="dash-designation-bars" class="bar-chart-list"></div>
+                </article>
+            </div>
+
+            <div class="dashboard-bottom-grid">
+                <article class="panel-card">
+                    <div class="panel-head">
+                        <h2>Recent Activity</h2>
+                        <span class="muted-text">Latest events from status &amp; device logs</span>
+                    </div>
+                    <div id="dash-activity-timeline" class="activity-timeline"></div>
+                </article>
+
+                <article class="panel-card">
+                    <div class="panel-head">
+                        <h2>ESP32 Cabin Units</h2>
+                        <span class="muted-text">30s heartbeat &middot; 90s offline threshold</span>
+                    </div>
+                    <div id="dash-devices-list" class="dash-devices-list"></div>
+                </article>
+            </div>
+        </section>
+
+        <!-- TIMETABLE VIEW (Phase 2) -->
+        <section id="view-timetable" class="tab-panel" role="tabpanel" aria-labelledby="tab-timetable" hidden>
+            <div class="tt-toolbar panel-card">
+                <div class="tt-section-tabs" role="tablist" aria-label="Select 5th semester section">
+                    <button type="button" class="chip active" data-section="A" aria-pressed="true">Section A (M510)</button>
+                    <button type="button" class="chip" data-section="B" aria-pressed="false">Section B (M511)</button>
+                    <button type="button" class="chip" data-section="C" aria-pressed="false">Section C (M509/M515)</button>
+                </div>
+
+                <div class="tt-actions">
+                    <label class="sr-only" for="tt-faculty-filter">Filter timetable by faculty</label>
+                    <select id="tt-faculty-filter" class="select-control" aria-label="Filter timetable by faculty">
+                        <option value="">All Faculty (Section View)</option>
+                    </select>
+                    <button type="button" class="btn-outline" id="tt-print-btn">Print</button>
+                    <button type="button" class="btn-outline" id="tt-csv-btn">Download CSV</button>
+                </div>
+            </div>
+
+            <div class="tt-header-banner panel-card" id="tt-meta-banner">
+                <div>
+                    <strong id="tt-banner-title">SEM: V 'A' &middot; Room M510</strong>
+                    <div class="muted-text" id="tt-banner-sub">ODD SEMESTER 2026-27 &middot; Dated 04-09-2026 &middot; Version 1.0</div>
+                </div>
+                <div class="tt-legend-pills">
+                    <span class="tt-pill tt-pill-lab">Lab</span>
+                    <span class="tt-pill tt-pill-elective">Elective / Activity</span>
+                    <span class="tt-pill tt-pill-now">Current IST Slot</span>
+                </div>
+            </div>
+
+            <div id="tt-section-view">
+                <div class="tt-mobile-days" id="tt-mobile-days" aria-label="Select day for mobile view"></div>
+                <div id="tt-mobile-day-card" class="tt-mobile-day-card"></div>
+
+                <div class="tt-desktop-wrap panel-card">
+                    <table class="tt-table" id="tt-desktop-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Day / Time</th>
+                                <th scope="col" data-time="09:00">9:00&ndash;10:00</th>
+                                <th scope="col" data-time="10:00">10:00&ndash;11:00</th>
+                                <th scope="col" class="tt-break-col">11:00&ndash;11:30</th>
+                                <th scope="col" data-time="11:30">11:30&ndash;12:30</th>
+                                <th scope="col" data-time="12:30">12:30&ndash;1:30</th>
+                                <th scope="col" class="tt-break-col">1:30&ndash;2:30</th>
+                                <th scope="col" data-time="14:30">2:30&ndash;3:30</th>
+                                <th scope="col" data-time="15:30">3:30&ndash;4:30</th>
+                                <th scope="col" data-time="16:30">4:30&ndash;6:30</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tt-desktop-tbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="panel-card tt-legend-card">
+                    <h3>Course &amp; Faculty Legend</h3>
+                    <div class="table-scroll">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Course Code</th>
+                                    <th scope="col">Course Name</th>
+                                    <th scope="col">Faculty</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tt-legend-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tt-faculty-view" hidden>
+                <div class="dashboard-charts-grid">
+                    <article class="panel-card">
+                        <div class="panel-head">
+                            <h3 id="tt-fac-busy-title">Faculty Schedule Across Sections</h3>
+                        </div>
+                        <div id="tt-fac-busy-list" class="activity-timeline"></div>
+                    </article>
+                    <article class="panel-card">
+                        <div class="panel-head">
+                            <h3>Free Slots (When This Faculty Is Free)</h3>
+                        </div>
+                        <div id="tt-fac-free-list" class="free-slots-grid"></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <span>Dept. of CSE (AI &amp; ML), VVCE Mysuru</span>
+            <span id="footer-sync-time">Last data sync: --</span>
+            <span>Timetable Odd Sem 2026&ndash;27 &middot; Ver 1.0 (04-09-2026)</span>
+        </div>
+    </footer>
+
+    <!-- Faculty Detail & Weekly Timetable Modal -->
+    <div id="faculty-modal" class="modal-backdrop" hidden>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-faculty-name">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="avatar avatar-lg" id="modal-avatar" aria-hidden="true">AC</div>
+                    <div>
+                        <div class="modal-designation" id="modal-designation">Designation</div>
+                        <h2 id="modal-faculty-name">Faculty Name</h2>
+                        <div class="modal-qualification" id="modal-qualification">Qualification</div>
+                        <div class="modal-dept-college" id="modal-dept-college">CSE (AI &amp; ML) &middot; VVCE Mysuru</div>
+                    </div>
+                </div>
+                <button type="button" class="modal-close" id="modal-close-btn" aria-label="Close timetable modal">
+                    &times;
+                </button>
+            </div>
+
+            <div class="modal-status-row">
+                <span class="status-badge" id="modal-status-badge">Not available</span>
+                <span class="modal-updated" id="modal-updated-at">Updated: --</span>
+                <span class="modal-device-pill" id="modal-device-pill" hidden></span>
+            </div>
+
+            <div class="now-next-grid">
+                <div class="schedule-highlight current-box">
+                    <div class="highlight-label">In Class Now (IST)</div>
+                    <div id="modal-current-class" class="highlight-body">Loading...</div>
+                </div>
+                <div class="schedule-highlight next-box">
+                    <div class="highlight-label">Next Scheduled Class</div>
+                    <div id="modal-next-class" class="highlight-body">Loading...</div>
+                </div>
+            </div>
+
+            <div class="timetable-section">
+                <div class="timetable-heading">
+                    <h3>Mini Weekly Timetable (Mon&ndash;Sat)</h3>
+                    <span class="timetable-note">ESP32 button state always takes priority over scheduled classes</span>
+                </div>
+                <div id="modal-timetable-grid" class="week-grid">
+                    <div class="loading-state">Loading weekly timetable...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Drawer -->
+    <div id="settings-backdrop" class="drawer-backdrop" hidden>
+        <aside class="settings-drawer" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="drawer-header">
+                <h2 id="settings-title">Display &amp; Notification Settings</h2>
+                <button type="button" class="modal-close" id="settings-close-btn" aria-label="Close settings">&times;</button>
+            </div>
+            <div class="drawer-body">
+                <div class="setting-group">
+                    <label for="setting-theme">Theme</label>
+                    <select id="setting-theme" class="select-control">
+                        <option value="system">System default</option>
+                        <option value="light">Light (VVCE Bright)</option>
+                        <option value="dark">Dark (VVCE Night)</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label for="setting-layout">Card Density</label>
+                    <select id="setting-layout" class="select-control">
+                        <option value="comfortable">Comfortable</option>
+                        <option value="compact">Compact</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label for="setting-default-view">Default Directory View</label>
+                    <select id="setting-default-view" class="select-control">
+                        <option value="cards">Card grid</option>
+                        <option value="list">List rows</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label for="setting-time-format">Time Format</label>
+                    <select id="setting-time-format" class="select-control">
+                        <option value="12h">12-hour (AM/PM)</option>
+                        <option value="24h">24-hour (HH:mm)</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label for="setting-default-section">Default Timetable Section</label>
+                    <select id="setting-default-section" class="select-control">
+                        <option value="A">Section A (M510)</option>
+                        <option value="B">Section B (M511)</option>
+                        <option value="C">Section C (M509/M515)</option>
+                    </select>
+                </div>
+
+                <div class="setting-toggle">
+                    <label for="setting-toast">Live toast popups</label>
+                    <input type="checkbox" id="setting-toast" />
+                </div>
+
+                <div class="setting-toggle">
+                    <label for="setting-sound">Notification sounds</label>
+                    <input type="checkbox" id="setting-sound" />
+                </div>
+
+                <div class="setting-toggle">
+                    <label for="setting-browser-notify">Browser desktop notifications</label>
+                    <input type="checkbox" id="setting-browser-notify" />
+                </div>
+
+                <div class="setting-toggle">
+                    <label for="setting-device-notify">Notify me about device online/offline</label>
+                    <input type="checkbox" id="setting-device-notify" />
+                </div>
+            </div>
+            <div class="drawer-footer">
+                <button type="button" class="btn-secondary" id="settings-reset-btn">Reset to defaults</button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Live Toast Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+    <script src="/js/state.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/settings.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/timetable.js"></script>
+    <script src="/js/directory.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
