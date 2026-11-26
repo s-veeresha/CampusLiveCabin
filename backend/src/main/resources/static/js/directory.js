@@ -64,8 +64,10 @@
         const q = app.state.search.trim().toLowerCase();
         if (!q) return true;
 
+        const cabinNumber = item.cabinNumber || `Cabin-${String(item.id).padStart(2, "0")}`;
         const haystack = [
             item.name,
+            cabinNumber,
             item.designation,
             item.qualification,
             item.currentClass ? item.currentClass.courseCode : "",
@@ -135,15 +137,26 @@
         nameEl.className = "faculty-name";
         nameEl.textContent = item.name;
 
+        const cabinNumber = item.cabinNumber || `Cabin-${String(item.id).padStart(2, "0")}`;
+
+        const metaRow = document.createElement("div");
+        metaRow.className = "faculty-meta-row";
+
         const desigEl = document.createElement("span");
         desigEl.className = "faculty-designation";
         desigEl.textContent = item.designation;
+
+        const cabinEl = document.createElement("span");
+        cabinEl.className = "cabin-badge";
+        cabinEl.textContent = cabinNumber;
+
+        metaRow.append(desigEl, cabinEl);
 
         const qualEl = document.createElement("div");
         qualEl.className = "faculty-qual";
         qualEl.textContent = item.qualification;
 
-        identity.append(nameEl, desigEl, qualEl);
+        identity.append(nameEl, metaRow, qualEl);
         mainBtn.append(avatar, identity);
         mainBtn.addEventListener("click", () => openModal(item.id, mainBtn));
 
@@ -268,12 +281,13 @@
     }
 
     function updateModalHeader(faculty) {
+        const cabinNumber = faculty.cabinNumber || `Cabin-${String(faculty.id).padStart(2, "0")}`;
         dom.modalAvatar.textContent = app.getInitials(faculty.name);
         dom.modalAvatar.className = `avatar avatar-lg ${app.getDesignationClass(faculty.designation)}`;
-        dom.modalDesignation.textContent = faculty.designation;
+        dom.modalDesignation.innerHTML = `${faculty.designation} <span class="cabin-badge" style="margin-left:8px">${cabinNumber}</span>`;
         dom.modalName.textContent = faculty.name;
         dom.modalQualification.textContent = faculty.qualification;
-        dom.modalDeptCollege.textContent = `${faculty.department} · ${faculty.college}`;
+        dom.modalDeptCollege.textContent = `${cabinNumber} · ${faculty.department} · ${faculty.college}`;
         dom.modalStatusBadge.className = `status-badge ${faculty.available ? "is-available" : "is-unavailable"}`;
         dom.modalStatusBadge.textContent = faculty.available ? "Available" : "Not available";
         dom.modalUpdatedAt.textContent = `Last updated: ${app.formatIstTimestamp(faculty.updatedAt)}`;

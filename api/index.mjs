@@ -310,13 +310,15 @@ async function getFacultyDtoById(facultyId) {
   ]);
   if (facRes.rows.length === 0) return null;
   const f = facRes.rows[0];
+  const fid = Number(f.id);
   return {
-    id: Number(f.id),
+    id: fid,
     name: f.name,
     designation: f.designation,
     qualification: f.qualification,
     college: f.college,
     department: f.department,
+    cabinNumber: `Cabin-${String(fid).padStart(2, "0")}`,
     available: Boolean(f.available),
     updatedAt: formatIstIso(f.updated_at),
     currentClass: findCurrentClass(slotRes.rows, ist),
@@ -361,6 +363,7 @@ async function getAllFacultyDtos() {
       qualification: f.qualification,
       college: f.college,
       department: f.department,
+      cabinNumber: `Cabin-${String(id).padStart(2, "0")}`,
       available: Boolean(f.available),
       updatedAt: formatIstIso(f.updated_at),
       currentClass: findCurrentClass(slotsByFac.get(id) || [], ist),

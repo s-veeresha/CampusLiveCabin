@@ -860,15 +860,42 @@ html[data-theme="dark"] .icon-moon { display: none; }
     color: var(--text-primary);
 }
 
+.faculty-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+}
+
 .faculty-designation {
     display: inline-block;
-    margin-top: 3px;
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--card-accent, var(--accent-asst));
     background: color-mix(in srgb, var(--card-accent, var(--accent-asst)) 14%, var(--bg-card));
     padding: 2px 9px;
     border-radius: 999px;
+}
+
+.cabin-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.73rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    background: #e0e7ff;
+    border: 1px solid #c7d2fe;
+    padding: 1px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    font-family: inherit;
+}
+
+[data-theme="dark"] .cabin-badge {
+    color: #93c5fd;
+    background: rgba(30, 58, 138, 0.4);
+    border-color: rgba(147, 197, 253, 0.35);
 }
 
 .faculty-qual {

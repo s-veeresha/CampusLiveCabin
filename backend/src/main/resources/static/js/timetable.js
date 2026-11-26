@@ -86,7 +86,8 @@
         for (const f of app.state.faculty) {
             const opt = document.createElement("option");
             opt.value = String(f.id);
-            opt.textContent = `${f.name} (${f.designation})`;
+            const cabin = f.cabinNumber || `Cabin-${String(f.id).padStart(2, "0")}`;
+            opt.textContent = `${f.name} (${cabin} · ${f.designation})`;
             dom.facultyFilter.appendChild(opt);
         }
         dom.facultyFilter.value = current;

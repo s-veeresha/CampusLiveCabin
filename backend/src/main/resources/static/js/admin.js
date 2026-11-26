@@ -165,7 +165,8 @@
                 <td class="admin-btn-cell"></td>
                 <td class="admin-btn-cell"></td>
             `;
-            tr.children[0].textContent = String(f.id);
+            const cabin = f.cabinNumber || `Cabin-${String(f.id).padStart(2, "0")}`;
+            tr.children[0].innerHTML = `<span>${f.id}</span> <span class="cabin-badge" style="font-size:0.7rem;margin-left:4px">${cabin}</span>`;
             tr.children[1].querySelector("strong").textContent = f.name;
             tr.children[2].textContent = f.designation;
             tr.children[3].textContent = f.qualification;

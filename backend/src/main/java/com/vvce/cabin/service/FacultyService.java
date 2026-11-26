@@ -170,6 +170,7 @@ public class FacultyService {
                 row.qualification(),
                 row.college(),
                 row.department(),
+                String.format("Cabin-%02d", row.id()),
                 row.available(),
                 updatedIso,
                 currentClass,
