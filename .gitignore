@@ -1,4 +1,7 @@
 backend/target/
+node_modules/
+.vercel/
+.neon
 *.class
 *.jar
 *.war
@@ -7,4 +10,6 @@ backend/target/
 *.iml
 .vscode/
 .env
+.env.*
+!.env.example
 *.local

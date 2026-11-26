@@ -10,9 +10,12 @@ Faculty press one of two push buttons on an ESP32 module inside their cabin (`Av
 
 ```text
 Campus_Live_Cabin/
+├── api/
+│   └── index.mjs                  # Vercel Node.js Serverless API + SSE handler (pg + @vercel/functions)
 ├── database/
-│   ├── schema.sql                 # Fresh install: schema, 29 faculty, courses, timetable, admin/device tables
-│   └── migration_v2.sql           # Non-destructive upgrade for existing cabin_db installations
+│   ├── schema.sql                 # Fresh MySQL install: 29 faculty, courses, timetable, admin/device tables
+│   ├── migration_v2.sql           # Non-destructive MySQL upgrade for existing cabin_db installations
+│   └── schema_postgres.sql        # Neon Postgres schema + seed data for cloud deployment
 ├── backend/
 │   ├── pom.xml                    # Spring Boot 3.5.16, Java 17 (--release 17), Web, JDBC, Crypto, MySQL
 │   └── src/main/
@@ -23,6 +26,8 @@ Campus_Live_Cabin/
 ├── esp32/
 │   ├── esp32_cabin.ino            # Arduino C++ ESP32 sketch (GPIO 13 / GPIO 27, 3 retries, 30s heartbeat)
 │   └── esp32_cabin/esp32_cabin.ino
+├── package.json
+├── vercel.json
 ├── timetable_extracted.md         # Extracted 5th-sem Odd 2026-27 timetable (Sections A, B, C)
 └── README.md
 ```
@@ -179,3 +184,18 @@ Notes:
 3. Upload to the ESP32 and open **Serial Monitor** at `115200` baud.
    - Button presses retry up to **3 attempts** (300 ms delay) and print the full URL, payload, HTTP code, response body, or diagnostic check hint on failure.
    - Heartbeats post every **30 seconds**; if silent for **90 seconds**, the backend marks the cabin device offline.
+
+---
+
+## 7. Cloud Deployment (Vercel + Neon Postgres)
+
+For public internet hosting without keeping a local PC running 24/7, the static frontend (`backend/src/main/resources/static`) and [api/index.mjs](api/index.mjs) run on **Vercel** backed by **Neon Postgres**:
+
+1. **Provision Neon Postgres** and run `database/schema_postgres.sql` once against the direct connection string (`psql "$DIRECT_DATABASE_URL" -f database/schema_postgres.sql`).
+2. **Connect the GitHub repository on Vercel** with root settings intact (`vercel.json` serves `backend/src/main/resources/static` and routes `/api/*` to `api/index.mjs`, `/admin` to `/admin.html`, `/diagnostics` to `/diagnostics.html`).
+3. **Set Vercel Environment Variables** (`Production`, `Preview`, `Development`):
+   - `DATABASE_URL` — Neon **pooled** (`-pooler`) connection string with `?sslmode=verify-full`
+   - `API_KEY` — shared `X-API-KEY` header expected from the ESP32 (`vvce-cabin-2026`)
+   - `ADMIN_INITIAL_PASSWORD` — initial `/admin` seed password (`vvce-admin-2026`, forced change on first login)
+   - `ADMIN_TOKEN_SECRET` — long random secret for HMAC session cookies
+4. **ESP32 over HTTPS**: To point the hardware ESP32 directly at the live `https://<your-app>.vercel.app` URL instead of local LAN `http://<PC_IP>:8080`, update `SERVER` in `esp32/esp32_cabin.ino` to `https://<your-app>.vercel.app` and use `WiFiClientSecure` (with `setInsecure()` or the Vercel/ISRG root CA) in the sketch before flashing.
